@@ -1,0 +1,34 @@
+version: '3'
+
+volumes:
+  file-upload-database:
+    external: true
+
+networks:
+  file-upload-network:
+    external: true
+
+services:
+  file-upload:
+    image: ambientum/php:7.4-nginx
+    container_name: file-upload
+    volumes:
+      - .:/var/www/app
+    ports:
+      - "8008:8080"
+    networks:
+      - file-upload-network
+
+  file-upload-database:
+    image: mysql:5.7
+    volumes:
+      - file-upload-database:/var/lib/mysql
+    ports:
+      - "33068:3306"
+    environment:
+      - "MYSQL_DATABASE=database"
+      - "MYSQL_USER=user"
+      - "MYSQL_PASSWORD=secret"
+      - "MYSQL_ALLOW_EMPTY_PASSWORD=true"
+    networks:
+      - file-upload-network
